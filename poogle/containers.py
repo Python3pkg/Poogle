@@ -94,6 +94,9 @@ class PoogleResultsPage(object):
     def __len__(self):
         return self.count
 
+    def __repr__(self):
+        return '<PoogleResultsPage Container: Page {num}>'.format(num=self.number)
+
 
 class PoogleResult(object):
 
@@ -130,3 +133,9 @@ class PoogleResult(object):
         # We pull the URL from the cite tag, since the actual href from Google contains arbitrary query parameters
         self.url = self._soup.cite.text
         self._log.info('Result URL parsed: %s', self.url)
+
+    def __repr__(self):
+        return '<PoogleResult Container: {title}>'.format(title=self.title)
+
+    def __str__(self):
+        return '{title} :: {url}'.format(title=self.title, url=self.url)
