@@ -158,3 +158,10 @@ class Poogle(object):
 
     def __repr__(self):
         return '<Poogle Search: "{q}">'.format(q=self._query)
+
+
+def google_search(query, results=10):
+    max_queries = int(results / 100) + 10
+    poogle = Poogle(query, results, max_queries)
+
+    return poogle.results[:results]
