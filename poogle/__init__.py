@@ -3,10 +3,19 @@ from time import sleep
 
 import requests
 from requests.utils import quote
-from bs4 import BeautifulSoup
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    from beautifulsoup4 import BeautifulSoup
 
 from poogle.errors import PoogleMaxQueriesError, PoogleRequestError, PoogleNoMoreResultsError
 from poogle.containers import PoogleResultsPage
+
+__author__     = "Makoto Fujimoto"
+__copyright__  = 'Copyright 2015, Makoto Fujimoto'
+__license__    = "MIT"
+__version__    = "0.1"
+__maintainer__ = "Makoto Fujimoto"
 
 
 class Poogle(object):
@@ -112,7 +121,7 @@ class Poogle(object):
             results(int):   The number of additional search results to request. This has a cap limit of 100 per call.
 
         Returns:
-            list of poogle.containers.PoogleResult
+            list[poogle.containers.PoogleResult]
         """
         if not self.last.next_url:
             raise PoogleNoMoreResultsError('There are no more search results available')
@@ -145,6 +154,12 @@ class Poogle(object):
 
     @property
     def results(self):
+        """
+        Concatenate results from all pages together and return
+
+        Returns:
+            list[poogle.containers.PoogleResult]
+        """
         # If we're querying lazily, make sure we've fetched our initial results
         if self._lazy and not self._current:
             self._get_minimum_results()
