@@ -8,3 +8,11 @@ class PoogleRequestError(PoogleError):
 
 class PoogleParserError(PoogleError):
     pass
+
+
+class PoogleMaxQueriesError(PoogleError):
+    pass
+
+
+class PoogleNoMoreResultsError(PoogleError):
+    pass

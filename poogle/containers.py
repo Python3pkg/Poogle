@@ -25,15 +25,6 @@ class PoogleResultsPage(object):
         self.prev_url = None
         self.next_url = None
 
-        self._parse_results()
-
-    def _parse_results(self):
-        """
-        Parse search results
-
-        Raises:
-            PoogleError:    Raised if the search results can not be parsed for any reason
-        """
         # Result counts aren't critical, so unless we want strict parsing, we should swallow any errors parsing them
         try:
             self._parse_total_results_count()
@@ -41,6 +32,13 @@ class PoogleResultsPage(object):
             if self._poogle.strict:
                 raise
 
+        self._parse_results()
+        self._parse_page_number()
+
+    def _parse_results(self):
+        """
+        Parse search results
+        """
         results = self._soup.find(id='search').ol.find_all('li', {'class': 'g'})
         for result in results:
             try:
@@ -150,7 +148,7 @@ class PoogleResult(object):
         self._log.info('Result URL parsed: %s', self.url)
 
     def __repr__(self):
-        return '<PoogleResult Container: {title}>'.format(title=self.title)
+        return '<PoogleResult Container: "{title}">'.format(title=self.title.replace('"', '\\"'))
 
     def __str__(self):
         return '{title} :: {url}'.format(title=self.title, url=self.url)
