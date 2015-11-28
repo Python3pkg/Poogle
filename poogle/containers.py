@@ -152,7 +152,10 @@ class PoogleResult(object):
         self._log.info('Result URL parsed: %s', self.url)
 
     def __repr__(self):
-        return '<PoogleResult Container: "{title}">'.format(title=self.title)
+        return '<PoogleResult Container: "{title!r}">'.format(title=self.title)
+
+    def __unicode__(self):
+        return '{title!r} :: {url!r}'.format(title=self.title, url=self.url)
 
     def __str__(self):
-        return '{title} :: {url}'.format(title=self.title, url=self.url)
+        return unicode(self).encode('utf-8')
