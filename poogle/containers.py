@@ -1,12 +1,13 @@
-import logging
-
 import re
+import logging
 
 from poogle.errors import PoogleParserError, PoogleError
 
 
 class PoogleResultsPage(object):
-
+    """
+    Search results page container
+    """
     def __init__(self, poogle, soup):
         """
         Args:
@@ -25,7 +26,7 @@ class PoogleResultsPage(object):
         self.prev_url = None
         self.next_url = None
 
-        # Result counts aren't critical, so unless we want strict parsing, we should swallow any errors parsing them
+        # Result counts aren't critical, so unless we want strict parsing, we should swallow any errors parsing them.
         try:
             self._parse_total_results_count()
         except PoogleError:
@@ -37,7 +38,7 @@ class PoogleResultsPage(object):
 
     def _parse_results(self):
         """
-        Parse search results
+        Parse search results.
         """
         results = self._soup.find(id='search').ol.find_all('li', {'class': 'g'})
         for result in results:
@@ -93,7 +94,7 @@ class PoogleResultsPage(object):
             if self._poogle.strict:
                 raise PoogleParserError('Unable to parse the current page number')
 
-        # Get the previous / next page links
+        # Get the previous / next page links.
         p_prev = foot.find(id='pnprev')
         if p_prev:
             self.prev_url = 'https://www.google.com{q}'.format(q=p_prev.get('href'))
@@ -112,7 +113,9 @@ class PoogleResultsPage(object):
 
 
 class PoogleResult(object):
-
+    """
+    Single search result container.
+    """
     def __init__(self, page, soup):
         """
         Args:
@@ -130,7 +133,7 @@ class PoogleResult(object):
 
     def _parse_result(self):
         """
-        Parse search result data
+        Parse search result data.
 
         Raises:
             PoogleParserError:  Raised if the result can not be parsed for any reason
@@ -138,12 +141,12 @@ class PoogleResult(object):
         self.title = self._soup.a.text
         self._log.info('Result title parsed: %s', self.title)
 
-        # Make sure this is a valid result URL (and not a link to image results, as an example)
+        # Make sure this is a valid result URL (and not a link to image results, as an example).
         href = self._soup.a.get('href')
         if not href.startswith('/url?'):
             raise PoogleParserError('Unrecognized URL format: %s', href)
 
-        # We pull the URL from the cite tag, since the actual href from Google contains arbitrary query parameters
+        # We pull the URL from the cite tag, since the actual href from Google contains arbitrary query parameters.
         self.url = self._soup.cite.text
         self._log.info('Result URL parsed: %s', self.url)
 
