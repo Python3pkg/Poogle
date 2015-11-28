@@ -20,5 +20,5 @@ setup(
             'poogle = poogle.cli:cli'
         ],
     },
-    install_requires=['requests', 'click'],
+    install_requires=['requests>=2.8.1,<2.9', 'click>=6.2,<6.3'],
 )
