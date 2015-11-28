@@ -1,21 +1,4 @@
-import os
 from setuptools import setup, find_packages
-
-
-def find_data_files():
-    data_files = []
-
-    # for root, dirs, files in os.walk('plugins'):
-    #     for name in files:
-    #         if name.endswith('.cfg') or name.endswith('.aml'):
-    #             data_files.append(os.path.join(root, name))
-    #
-    # for root, dirs, files in os.walk('config'):
-    #     for name in files:
-    #         if name.endswith('.cfg'):
-    #             data_files.append(os.path.join(root, name))
-
-    return data_files
 
 
 setup(
@@ -34,12 +17,8 @@ setup(
     packages=find_packages(exclude=['tests']),
     entry_points={
         'console_scripts': [
-            # 'firefly = firefly.cli:cli',
-            # 'firefly-config = firefly.cli.config:cli'
+            'poogle = poogle.cli:cli'
         ],
     },
-    install_requires=['', 'requests'],
-    package_data={
-        'firefly': find_data_files(),
-    },
+    install_requires=['requests', 'click'],
 )
