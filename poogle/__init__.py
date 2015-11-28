@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 import requests
 from requests.utils import quote
@@ -38,14 +39,26 @@ class Poogle(object):
 
         self.strict = kwargs.get('strict', False)
         self._lazy  = kwargs.get('lazy', False)
+        self._pause = kwargs.get('pause', 0.5)
 
         # Execute search queries until we have retrieved the minimum number of required results (unless querying lazily)
         if not self._lazy:
-            while self._current < self._min_results:
-                try:
-                    self._execute_initial_queries()
-                except PoogleNoMoreResultsError:
-                    break
+            self._get_minimum_results()
+
+    def _get_minimum_results(self):
+        """
+        Begin query iteration until we have the minimum number of queries returned
+        """
+        while self._current < self._min_results:
+            # If this is not our first query and we have a pause defined, wait here
+            if self._current and self._pause:
+                self._log.debug('Pausing for %s seconds between queries', self._pause)
+                sleep(self._pause)
+
+            try:
+                self._execute_initial_queries()
+            except PoogleNoMoreResultsError:
+                break
 
     def _execute_initial_queries(self):
         """
@@ -65,6 +78,7 @@ class Poogle(object):
         # Get the current search query URL
         if self._current:
             if not self.last.next_url:
+                self._log.info('No more results to fetch')
                 raise PoogleNoMoreResultsError('No more results to fetch')
             base_url = self.last.next_url
         else:
@@ -133,11 +147,7 @@ class Poogle(object):
     def results(self):
         # If we're querying lazily, make sure we've fetched our initial results
         if self._lazy and not self._current:
-            while self._current < self._min_results:
-                try:
-                    self._execute_initial_queries()
-                except PoogleNoMoreResultsError:
-                    break
+            self._get_minimum_results()
 
         # Concatenate results from all pages together and return
         all_results = []
@@ -147,4 +157,4 @@ class Poogle(object):
         return all_results
 
     def __repr__(self):
-        return '<Poogle Search: "{q}">'.format(q=self._query.replace('"', '\\"'))
+        return '<Poogle Search: "{q}">'.format(q=self._query)

@@ -14,11 +14,11 @@ class PoogleResultsPage(object):
             poogle(poogle.Poogle):      The parent Poogle object
             soup(bs4.BeautifulSoup):    The search results page HTML soup.
         """
+        self._log    = logging.getLogger('poogle.results_page')
         self._poogle = poogle
-        self._log = logging.getLogger('poogle.results_page')
-        self._soup = soup
+        self._soup   = soup
         self.results = []
-        self.count = 0
+        self.count   = 0
 
         self.total_results = 0
         self.number = 0
@@ -95,12 +95,13 @@ class PoogleResultsPage(object):
                 raise PoogleParserError('Unable to parse the current page number')
 
         # Get the previous / next page links.
-        p_prev = foot.find(id='pnprev')
+        tds = foot.find_all('td')
+        p_prev = tds[0].a
         if p_prev:
             self.prev_url = 'https://www.google.com{q}'.format(q=p_prev.get('href'))
             self._log.debug('Previous page URL: %s', self.prev_url)
 
-        p_next = foot.find(id='pnnext')
+        p_next = tds[-1].a
         if p_next:
             self.next_url = 'https://www.google.com{q}'.format(q=p_next.get('href'))
             self._log.debug('Next page URL: %s', self.next_url)
@@ -151,7 +152,7 @@ class PoogleResult(object):
         self._log.info('Result URL parsed: %s', self.url)
 
     def __repr__(self):
-        return '<PoogleResult Container: "{title}">'.format(title=self.title.replace('"', '\\"'))
+        return '<PoogleResult Container: "{title}">'.format(title=self.title)
 
     def __str__(self):
         return '{title} :: {url}'.format(title=self.title, url=self.url)
