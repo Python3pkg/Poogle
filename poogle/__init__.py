@@ -3,10 +3,7 @@ from time import sleep
 
 import requests
 from requests.utils import quote
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 
 from poogle.errors import PoogleMaxQueriesError, PoogleRequestError, PoogleNoMoreResultsError
 from poogle.containers import PoogleResultsPage

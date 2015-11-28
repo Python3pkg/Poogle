@@ -1,10 +1,7 @@
 import os
 import unittest
 
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    from beautifulsoup4 import BeautifulSoup
+from bs4 import BeautifulSoup
 from mock import mock
 
 import poogle
