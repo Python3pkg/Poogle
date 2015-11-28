@@ -22,6 +22,9 @@ class PoogleResultsPage(object):
         self.total_results = 0
         self.number = 0
 
+        self.prev_url = None
+        self.next_url = None
+
         self._parse_results()
 
     def _parse_results(self):
@@ -80,7 +83,8 @@ class PoogleResultsPage(object):
         Raises:
             PoogleParserError:  Raised if strict parsing is enabled and the page number could not be parsed.
         """
-        tds = self._soup.find(id='foot').find_all('td')
+        foot = self._soup.find(id='foot')
+        tds = foot.find_all('td')
         for td in tds:
             if not td.a and td.text.isdigit():
                 self.number = int(td.text)
@@ -90,6 +94,17 @@ class PoogleResultsPage(object):
             self._log.warn('Unable to parse the current page number')
             if self._poogle.strict:
                 raise PoogleParserError('Unable to parse the current page number')
+
+        # Get the previous / next page links
+        p_prev = foot.find(id='pnprev')
+        if p_prev:
+            self.prev_url = 'https://www.google.com{q}'.format(q=p_prev.get('href'))
+            self._log.debug('Previous page URL: %s', self.prev_url)
+
+        p_next = foot.find(id='pnnext')
+        if p_next:
+            self.next_url = 'https://www.google.com{q}'.format(q=p_next.get('href'))
+            self._log.debug('Next page URL: %s', self.next_url)
 
     def __len__(self):
         return self.count
