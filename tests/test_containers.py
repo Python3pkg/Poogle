@@ -28,11 +28,27 @@ class PoogleTestCase(PoogleBaseTestCase):
         mock_get_response.content = self.html
         mock_get.return_value = mock_get_response
 
-        obj = poogle.Poogle('test', 20, lazy=False)
+        obj = poogle.Poogle('test')
+        self.assertEqual(repr(obj), "<Poogle Search: 'test'>")
+
+        # Per page
+        with self.assertRaises(ValueError):
+            obj.per_page = 101
+
+        with self.assertRaises(ValueError):
+            obj.per_page = -1
+
+        obj.per_page = 20
+
+        self.assertIsInstance(obj.next_page(), containers.PoogleResultsPage)
+
+        with self.assertRaises(AttributeError):
+            obj.per_page = 30
 
         # Attributes
         self.assertEqual(obj._query, 'test')
         self.assertEqual(obj.query, 'test')
+        self.assertEqual(obj.per_page, obj._per_page)
         self.assertEqual(obj._per_page, 20)
         self.assertEqual(obj._query_count, 1)
         self.assertEqual(obj.total_results, 2390000000)
@@ -45,7 +61,7 @@ class PoogleTestCase(PoogleBaseTestCase):
         self.assertEqual(len(obj._results[0][1]), 20)
 
         self.assertFalse(obj.strict)
-        self.assertFalse(obj._lazy)
+        self.assertTrue(obj._lazy)
 
         # Next page
         self.assertIsInstance(obj.next_page(), containers.PoogleResultsPage)
