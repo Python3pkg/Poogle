@@ -148,15 +148,16 @@ def google_search(query, results=10, pause=0.5):
         if query_count >= limit:
             raise RuntimeError('Recursion error, exceeded query limit of %d with %d results', limit, len(query_results))
 
+        # Pause if this is not our first query
+        if pause and query_count:
+            sleep(pause)
+
         try:
             query_results += poogle.next_page().results
         except PoogleNoMoreResultsError:
             # If we have no more results, break now
             break
 
-        # Increase our query count and pause
         query_count += 1
-        if pause:
-            sleep(pause)
 
     return query_results[:results]
