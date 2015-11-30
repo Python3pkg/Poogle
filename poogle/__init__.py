@@ -108,6 +108,7 @@ class Poogle(object):
 
         self._results.append((self._current, page))
         self._current += len(page)
+        self._query_count += 1
         self.last = page
 
     def get_next(self, results=10):
