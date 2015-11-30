@@ -1,11 +1,12 @@
 import os
 import unittest
 
+import click
 from bs4 import BeautifulSoup
 from mock import mock
 from click.testing import CliRunner
 
-from poogle.cli import search
+from poogle.cli import PoogleCLI, search
 
 
 class PoogleCliTestCase(unittest.TestCase):
@@ -17,6 +18,17 @@ class PoogleCliTestCase(unittest.TestCase):
             self.html = f.read()
 
         self.soup = BeautifulSoup(self.html, 'html.parser')
+
+
+class PoogleHelpTestCase(PoogleCliTestCase):
+
+    def test_poogle_cli(self):
+
+        ctx_mock = mock.Mock()
+
+        cli = PoogleCLI()
+        self.assertListEqual(cli.list_commands(ctx_mock), ['search'])
+        self.assertIsInstance(cli.get_command(ctx_mock, 'search'), click.core.Command)
 
 
 class PoogleSearchTestCase(PoogleCliTestCase):
