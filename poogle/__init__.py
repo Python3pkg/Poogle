@@ -5,7 +5,7 @@ import requests
 from requests.utils import quote
 from bs4 import BeautifulSoup
 
-from poogle.errors import PoogleMaxQueriesError, PoogleRequestError, PoogleNoMoreResultsError
+from poogle.errors import PoogleRequestError, PoogleNoMoreResultsError
 from poogle.containers import PoogleResultsPage
 
 __author__     = "Makoto Fujimoto"
