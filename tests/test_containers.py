@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from mock import mock
 
 import poogle
-from poogle import containers, errors
+from poogle import containers
 
 
 class PoogleResultsPageTestCase(unittest.TestCase):
@@ -35,3 +35,16 @@ class PoogleResultsPageTestCase(unittest.TestCase):
 
         self.assertIsNone(self.results_page.prev_url)
         self.assertIsNotNone(self.results_page.next_url)
+
+    def test_results_container_attributes(self):
+        first = self.results_page.results[0]
+        self.assertEqual(first.title, 'Speedtest.net by Ookla - The Global Broadband Speed Test')
+        self.assertEqual(first.url, 'www.speedtest.net/')
+
+        fifth = self.results_page.results[4]
+        self.assertEqual(fifth.title, 'Personality test based on C. Jung and I. Briggs Myers type theory')
+        self.assertEqual(fifth.url, 'www.humanmetrics.com/cgi-win/jtypes2.asp')
+
+        last = self.results_page.results[-1]
+        self.assertEqual(last.title, 'Test - The Political Compass')
+        self.assertEqual(last.url, 'https://www.politicalcompass.org/test')
