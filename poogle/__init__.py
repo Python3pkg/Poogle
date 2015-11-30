@@ -104,6 +104,9 @@ class Poogle(object):
             self._log.warn('Attempted to change the per_page attribute after the query has already been executed')
             raise AttributeError('The per page attribute can not be changed after the search query has been executed')
 
+        if (value < 1) or (value > 100):
+            raise ValueError('per_page must contain be an integer between 1 and 100')
+
         self._per_page = value
 
     @property
@@ -127,7 +130,7 @@ class Poogle(object):
         return all_results
 
     def __repr__(self):
-        return '<Poogle Search: "{q}">'.format(q=self._query)
+        return '<Poogle Search: {q!r}>'.format(q=self._query)
 
 
 def google_search(query, results=10, pause=0.5):

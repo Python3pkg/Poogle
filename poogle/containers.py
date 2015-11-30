@@ -115,7 +115,7 @@ class PoogleResultsPage(object):
         return self.count
 
     def __repr__(self):
-        return '<PoogleResultsPage Container: Page {num}>'.format(num=self.number)
+        return '<PoogleResultsPage Container: Page {num!r}>'.format(num=self.number)
 
 
 class PoogleResult(object):
