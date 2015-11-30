@@ -3,6 +3,8 @@ import unittest
 
 from bs4 import BeautifulSoup
 from mock import mock
+from poogle.errors import PoogleRequestError
+from requests import RequestException
 
 import poogle
 from poogle import containers
@@ -81,6 +83,19 @@ class PoogleTestCase(PoogleBaseTestCase):
         mock_next_page.assert_called_once_with()
 
     @mock.patch('poogle.requests.get')
+    @mock.patch.object(poogle.Poogle, 'next_page')
+    def test_poogle_lazy_loading(self, mock_next_page, mock_get):
+
+        mock_get_response = mock.Mock()
+        mock_get_response.content = self.html
+        mock_get.return_value = mock_get_response
+
+        obj = poogle.Poogle('test', 20, lazy=True)
+        results = obj.results
+        mock_next_page.assert_called_once_with()
+
+
+    @mock.patch('poogle.requests.get')
     def test_poogle_bad_arguments(self, mock_get):
 
         mock_get_response = mock.Mock()
@@ -89,6 +104,12 @@ class PoogleTestCase(PoogleBaseTestCase):
 
         self.assertRaises(ValueError, poogle.Poogle, 'test', 101)
         self.assertRaises(ValueError, poogle.Poogle, 'test', -1)
+
+    @mock.patch('poogle.requests.get')
+    def test_request_error(self, mock_get):
+
+        mock_get.side_effect = RequestException()
+        self.assertRaises(PoogleRequestError, poogle.Poogle, 'test', 20, lazy=False)
 
 
 class PoogleResultsTestCase(PoogleBaseTestCase):
@@ -124,3 +145,36 @@ class PoogleResultsTestCase(PoogleBaseTestCase):
         last = self.results_page.results[-1]
         self.assertEqual(last.title, 'Test - The Political Compass')
         self.assertEqual(last.url, 'https://www.politicalcompass.org/test')
+
+
+class PoogleGoogleSearchTestCase(PoogleBaseTestCase):
+
+    @mock.patch('poogle.requests.get')
+    @mock.patch('poogle.sleep')
+    def test_standard_calls(self, mock_sleep, mock_get):
+
+        mock_get_response = mock.Mock()
+        mock_get_response.content = self.html
+        mock_get.return_value = mock_get_response
+
+        results = poogle.google_search('test query')
+        self.assertEqual(len(results), 10)
+
+        results = poogle.google_search('test query', 20)
+        self.assertEqual(len(results), 20)
+
+        mock_sleep.assert_not_called()
+
+    # TODO: We need a large sample to test this with
+    # @mock.patch('poogle.requests.get')
+    # @mock.patch('poogle.sleep')
+    # def test_large_calls(self, mock_sleep, mock_get):
+    #
+    #     mock_get_response = mock.Mock()
+    #     mock_get_response.content = self.html
+    #     mock_get.return_value = mock_get_response
+    #
+    #     results = poogle.google_search('test query', 150, 0.1)
+    #     self.assertEqual(len(results), 150)
+    #     mock_sleep.assert_called_once_with(0.1)
+
