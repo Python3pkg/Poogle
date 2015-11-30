@@ -14,5 +14,9 @@ class PoogleMaxQueriesError(PoogleError):
     pass
 
 
+class PoogleNoResultsError(PoogleError):
+    pass
+
+
 class PoogleNoMoreResultsError(PoogleError):
     pass

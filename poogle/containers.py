@@ -1,7 +1,7 @@
 import re
 import logging
 
-from poogle.errors import PoogleParserError, PoogleError
+from poogle.errors import PoogleParserError, PoogleError, PoogleNoResultsError
 
 
 class PoogleResultsPage(object):
@@ -40,7 +40,12 @@ class PoogleResultsPage(object):
         """
         Parse search results.
         """
-        results = self._soup.find(id='search').ol.find_all('li', {'class': 'g'})
+        try:
+            results = self._soup.find(id='search').ol.find_all('li', {'class': 'g'})
+        except AttributeError as e:
+            self._log.debug(e.message)
+            raise PoogleNoResultsError('Your search - {q} - did not match any documents.'.format(q=self._poogle.query))
+
         for result in results:
             try:
                 self.results.append(PoogleResult(self, result))
