@@ -69,6 +69,27 @@ class PoogleTestCase(PoogleBaseTestCase):
         self.assertEqual(len(obj._results), 2)
         self.assertEqual(obj._results[1][0], 2)
 
+    @mock.patch('poogle.requests.get')
+    @mock.patch.object(poogle.Poogle, 'next_page')
+    def test_poogle_eager_loading(self, mock_next_page, mock_get):
+
+        mock_get_response = mock.Mock()
+        mock_get_response.content = self.html
+        mock_get.return_value = mock_get_response
+
+        obj = poogle.Poogle('test', 20, lazy=False)
+        mock_next_page.assert_called_once_with()
+
+    @mock.patch('poogle.requests.get')
+    def test_poogle_bad_arguments(self, mock_get):
+
+        mock_get_response = mock.Mock()
+        mock_get_response.content = self.html
+        mock_get.return_value = mock_get_response
+
+        self.assertRaises(ValueError, poogle.Poogle, 'test', 101)
+        self.assertRaises(ValueError, poogle.Poogle, 'test', -1)
+
 
 class PoogleResultsTestCase(PoogleBaseTestCase):
 
