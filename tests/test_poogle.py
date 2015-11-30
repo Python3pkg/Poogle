@@ -1,6 +1,7 @@
 import os
 import unittest
 
+import yurl
 from bs4 import BeautifulSoup
 from mock import mock
 from poogle.errors import PoogleRequestError
@@ -136,15 +137,18 @@ class PoogleResultsTestCase(PoogleBaseTestCase):
     def test_results_container_attributes(self):
         first = self.results_page.results[0]
         self.assertEqual(first.title, 'Speedtest.net by Ookla - The Global Broadband Speed Test')
-        self.assertEqual(first.url, 'www.speedtest.net/')
+        self.assertIsInstance(first.url, yurl.URL)
+        self.assertEqual(first.url.as_string(), 'http://www.speedtest.net/')
 
         fifth = self.results_page.results[4]
         self.assertEqual(fifth.title, 'Personality test based on C. Jung and I. Briggs Myers type theory')
-        self.assertEqual(fifth.url, 'www.humanmetrics.com/cgi-win/jtypes2.asp')
+        self.assertIsInstance(fifth.url, yurl.URL)
+        self.assertEqual(fifth.url.as_string(), 'http://www.humanmetrics.com/cgi-win/jtypes2.asp')
 
         last = self.results_page.results[-1]
         self.assertEqual(last.title, 'Test - The Political Compass')
-        self.assertEqual(last.url, 'https://www.politicalcompass.org/test')
+        self.assertIsInstance(last.url, yurl.URL)
+        self.assertEqual(last.url.as_string(), 'https://www.politicalcompass.org/test')
 
 
 class PoogleGoogleSearchTestCase(PoogleBaseTestCase):

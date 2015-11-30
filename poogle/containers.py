@@ -1,6 +1,8 @@
 import re
 import logging
 
+from yurl import URL
+
 from poogle.errors import PoogleParserError, PoogleError, PoogleNoResultsError
 
 
@@ -134,6 +136,7 @@ class PoogleResult(object):
 
         self.title = None
         self.url = None
+        self.url_regex = re.compile(r'^/url\?q=(?P<url>.+)&sa=\w')
 
         self._parse_result()
 
@@ -152,8 +155,12 @@ class PoogleResult(object):
         if not href.startswith('/url?'):
             raise PoogleParserError('Unrecognized URL format: %s', href)
 
-        # We pull the URL from the cite tag, since the actual href from Google contains arbitrary query parameters.
-        self.url = self._soup.cite.text
+        match = self.url_regex.match(href)
+        if not match or not match.group('url'):
+            self._log.error('Unable to parse search result URL: {h}'.format(h=href))
+            raise PoogleParserError('Unable to parse search result URL: %s', href)
+
+        self.url = URL(match.group('url'))
         self._log.info('Result URL parsed: %s', self.url)
 
     def __repr__(self):

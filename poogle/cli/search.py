@@ -25,9 +25,6 @@ def cli(ctx, query, results, plain):
     query_parts = query.split()
 
     for result in results:
-        # Make sure the URL has a schema appended to it
-        url = 'http://{u}'.format(u=result.url) if not result.url.startswith('http') else result.url
-
         # Formatted results
         if not plain:
             title = click.style(result.title, bold=True)
@@ -44,10 +41,10 @@ def cli(ctx, query, results, plain):
 
             click.secho(title)
             click.secho('=' * 30)
-            click.secho(url)
+            click.secho(result.url.as_string())
         else:
             click.echo(result.title)
             click.echo('=' * 30)
-            click.echo(url)
+            click.echo(result.url.as_string())
 
         click.echo()

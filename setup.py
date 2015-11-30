@@ -20,5 +20,5 @@ setup(
             'poogle = poogle.cli:cli'
         ],
     },
-    install_requires=['requests>=2.8.1,<2.9', 'click>=6.2,<6.3', 'beautifulsoup4>=4.4.1,<4.5'],
+    install_requires=['requests>=2.8.1,<2.9', 'click>=6.2,<6.3', 'beautifulsoup4>=4.4.1,<4.5', 'yurl>=0.13,<0.14'],
 )
