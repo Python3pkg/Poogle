@@ -22,7 +22,7 @@ class PoogleCliTestCase(unittest.TestCase):
 class PoogleSearchTestCase(PoogleCliTestCase):
 
     @mock.patch('poogle.requests.get')
-    def test_poogle_attributes(self, mock_get):
+    def test_search(self, mock_get):
 
         mock_get_response = mock.Mock()
         mock_get_response.content = self.html
@@ -30,6 +30,34 @@ class PoogleSearchTestCase(PoogleCliTestCase):
 
         runner = CliRunner()
         result = runner.invoke(search.cli, ['-r 3', 'test'])
+
+        self.assertEqual(result.exit_code, 0)
+        expected_output = '''Executing search query for test
+
+Speedtest.net by Ookla - The Global Broadband Speed Test
+==============================
+http://www.speedtest.net/
+
+Test.com
+==============================
+https://www.test.com/
+
+Test - Wikipedia, the free encyclopedia
+==============================
+https://en.wikipedia.org/wiki/Test
+
+'''
+        self.assertEqual(result.output, expected_output)
+
+    @mock.patch('poogle.requests.get')
+    def test_search_plain(self, mock_get):
+
+        mock_get_response = mock.Mock()
+        mock_get_response.content = self.html
+        mock_get.return_value = mock_get_response
+
+        runner = CliRunner()
+        result = runner.invoke(search.cli, ['-r 3', '--plain', 'test'])
 
         self.assertEqual(result.exit_code, 0)
         expected_output = '''Executing search query for test
