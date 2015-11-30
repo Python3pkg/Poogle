@@ -7,6 +7,12 @@ Poogle is a Google scraping library and command line utility for Python.
 
 Currently, it only offers the ability to scrape Google search results. Future functionality will enable retrieving of image links, similar search queries, and even the ability to retrieve direct answers to questions you can ask Google.
 
+## Installation
+To install Poogle, simply:
+```
+$ pip install poogle
+```
+
 ## Usage
 Poogle provides both a librry for use in your own Python applications, as well as a CLI utility for executing search queries in the command line.
 
@@ -83,7 +89,7 @@ Options:
 
 Using it is pretty straightfoward. Just be sure to quote your search query if it contains more than one word.
 ```
-# poogle search -r 2 "Python"
+$ poogle search -r 2 "Python"
 Executing search query for Python
 
 Welcome to Python.org
