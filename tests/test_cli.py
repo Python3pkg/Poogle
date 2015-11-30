@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from mock import mock
 from click.testing import CliRunner
 
-from poogle.cli import PoogleCLI, search
+import poogle
+from poogle.cli import PoogleCLI, cli, search
 
 
 class PoogleCliTestCase(unittest.TestCase):
@@ -29,6 +30,13 @@ class PoogleHelpTestCase(PoogleCliTestCase):
         cli = PoogleCLI()
         self.assertListEqual(cli.list_commands(ctx_mock), ['search'])
         self.assertIsInstance(cli.get_command(ctx_mock, 'search'), click.core.Command)
+
+    def test_version(self):
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ['--version'])
+        self.assertEqual(result.exit_code, 0)
+        self.assertEqual(result.output, 'poogle, version {v}'.format(v=poogle.__version__))
 
 
 class PoogleSearchTestCase(PoogleCliTestCase):
