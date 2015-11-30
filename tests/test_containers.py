@@ -10,18 +10,13 @@ from poogle import containers
 
 class PoogleBaseTestCase(unittest.TestCase):
 
-    @mock.patch('poogle.Poogle')
-    def setUp(self, mock_poogle):
+    def setUp(self):
 
         self.html_dir = os.path.join(os.path.dirname(__file__), 'html')
         with open(os.path.join(self.html_dir, 'test.html'), "r") as f:
             self.html = f.read()
 
-        self.mock_poogle = mock_poogle
-        mock_poogle.strict = False
-
         self.soup = BeautifulSoup(self.html, 'html.parser')
-        self.results_page = containers.PoogleResultsPage(mock_poogle, self.soup)
 
 
 class PoogleTestCase(PoogleBaseTestCase):
@@ -33,26 +28,39 @@ class PoogleTestCase(PoogleBaseTestCase):
         mock_get_response.content = self.html
         mock_get.return_value = mock_get_response
 
-        obj = poogle.Poogle('test', 10)
+        obj = poogle.Poogle('test', 20, lazy=False)
 
+        # Attributes
         self.assertEqual(obj._query, 'test')
         self.assertEqual(obj.query, 'test')
-        self.assertEqual(obj._min_results, 10)
+        self.assertEqual(obj._per_page, 20)
         self.assertEqual(obj._query_count, 1)
         self.assertEqual(obj.total_results, 2390000000)
-        self.assertEqual(obj._current, 20)
+        self.assertEqual(obj._current_page, 1)
 
         self.assertIsInstance(obj.last, containers.PoogleResultsPage)
-        self.assertEqual(obj._results[0][0], 0)
+        self.assertEqual(obj._results[0][0], 1)
         self.assertIsInstance(obj._results[0][1], containers.PoogleResultsPage)
+        self.assertEqual(len(obj.results), 20)
         self.assertEqual(len(obj._results[0][1]), 20)
 
         self.assertFalse(obj.strict)
         self.assertFalse(obj._lazy)
-        self.assertEqual(obj._pause, 0.5)
+
+        # Next page
+        self.assertIsInstance(obj.next_page(), containers.PoogleResultsPage)
+        self.assertEqual(len(obj.results), 40)
+        self.assertEqual(len(obj._results), 2)
+        self.assertEqual(obj._results[1][0], 2)
 
 
 class PoogleResultsTestCase(PoogleBaseTestCase):
+
+    @mock.patch('poogle.Poogle')
+    def setUp(self, mock_poogle):
+        PoogleBaseTestCase.setUp(self)
+        self.mock_poogle = mock_poogle
+        self.results_page = containers.PoogleResultsPage(mock_poogle, self.soup)
 
     def test_results_page_container_attributes(self):
         self.assertIs(self.results_page._poogle, self.mock_poogle)
