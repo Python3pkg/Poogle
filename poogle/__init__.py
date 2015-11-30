@@ -75,8 +75,8 @@ class Poogle(object):
             page = requests.get(url)
             page.raise_for_status()
         except requests.RequestException as e:
-            self._log.error('An error occurred when executing the search query: %s', e.message)
-            raise PoogleRequestError(e.message)
+            self._log.error('An error occurred when executing the search query: %s', str(e))
+            raise PoogleRequestError(str(e))
 
         # Parse the search results page
         soup = BeautifulSoup(page.content, 'html.parser')
