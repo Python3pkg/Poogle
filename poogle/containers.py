@@ -1,6 +1,7 @@
 import re
 import logging
 
+from requests.utils import unquote
 from yurl import URL
 
 from poogle.errors import PoogleParserError, PoogleError, PoogleNoResultsError
@@ -160,7 +161,8 @@ class PoogleResult(object):
             self._log.error('Unable to parse search result URL: {h}'.format(h=href))
             raise PoogleParserError('Unable to parse search result URL: %s', href)
 
-        self.url = URL(match.group('url'))
+        url = unquote(match.group('url'))
+        self.url = URL(url)
         self._log.info('Result URL parsed: %s', self.url)
 
     def __repr__(self):
