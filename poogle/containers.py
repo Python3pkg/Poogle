@@ -172,4 +172,4 @@ class PoogleResult(object):
         return '{title!r} :: {url!r}'.format(title=self.title, url=self.url)
 
     def __str__(self):
-        return unicode(self).encode('utf-8')
+        return str(self).encode('utf-8')
